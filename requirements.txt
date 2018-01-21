@@ -1,3 +1,2 @@
 pyqt5
 pybluez
-git+https://github.com/nikhilkumarsingh/PyOBEX3.git

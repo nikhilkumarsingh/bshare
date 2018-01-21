@@ -1,4 +1,4 @@
-import sys
+import os, sys
 import argparse
 from subprocess import Popen, PIPE
 import bluetooth
@@ -6,8 +6,6 @@ from PyOBEX.client import Client
 from PyQt5.QtWidgets import QFileDialog, QApplication
 from PyQt5 import QtWidgets
 
-# my default bluetooth MAC address
-default_addr = 'F4:F5:24:B2:D9:7D'
 
 def select_files():
 	# Qt GUI to select files to share
@@ -58,16 +56,35 @@ def main():
 	parser.add_argument("-a", "--addr", type = str, nargs = 1,
 						metavar = "address", default = None,
 						help = "Connect to bluetooth device with specified Bluetooth address.")
-	 
+
+	parser.add_argument("-s", "--set", type = str, nargs = 1,
+						metavar = "address", default = None,
+						help = "Set default Bluetooth address.")
+	
+	parser.add_argument("-d", "--default", action='store_true',
+						help = "Shows the default bluetooth address.")
+
 	parser.add_argument("-l", "--list", action='store_true',
-						help = "Shows all the bluetooth devices identified by your device.")
-	 
- 
+						help = "Shows all the added bluetooth devices identified by your device.")
+	  
 	args = parser.parse_args()
+
+	# my default bluetooth MAC address
+	try:
+		with open(os.path.join(os.path.dirname(__file__), 'default_addr'), "r") as f:
+			default_addr = f.read()
+	except FileNotFoundError:
+		default_addr = ''
 
 	if args.list:
 		p = Popen(["bt-device", "-l"], stdout=PIPE)
 		print(str(p.stdout.read(), encoding="utf8"))
+	elif args.default:
+		print("Default bluetooth address: {}".format(default_addr))
+	elif args.set != None:
+		print("Default bluetooth address was changed to {}".format(args.set[0]))
+		with open(os.path.join(os.path.dirname(__file__), 'default_addr'), "w") as f:
+			f.write(args.set[0])
 	elif args.addr != None:
 		sharer(args.addr[0])
 	else:
