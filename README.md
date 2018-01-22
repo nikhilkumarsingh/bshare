@@ -5,6 +5,8 @@
 
 A command line bluetooth file sharing application for Linux.
 
+![](https://media.giphy.com/media/3oFzm0clRG4bpEtvhK/giphy.gif)
+
 ## Installation
 
 - Linux packages required:
